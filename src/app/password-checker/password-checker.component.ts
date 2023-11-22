@@ -5,7 +5,9 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatChipsModule } from '@angular/material/chips';
-
+import { InputPasswordComponent } from '../input-password/input-password.component';
+import { IndicatorPasswordComponent } from '../indicator-password/indicator-password.component';
+import { Subject } from 'rxjs';
 @Component({
   selector: 'app-password-checker',
   standalone: true,
@@ -16,57 +18,17 @@ import { MatChipsModule } from '@angular/material/chips';
     MatFormFieldModule,
     MatInputModule,
     ReactiveFormsModule,
-    MatChipsModule
+    MatChipsModule,
+    InputPasswordComponent,
+    IndicatorPasswordComponent
   ],
   templateUrl: './password-checker.component.html',
   styleUrl: './password-checker.component.css'
 })
 export class PasswordCheckerComponent {
-  textColor: string = '';
-  password: string = '';
-  easyStrength: string = 'gray';
-  mediumStrength: string = 'gray';
-  strongStrength: string = 'gray';
-
-  onPasswordChange(event: any): void {
-    this.password = event.target.value;
-    this.calculatePasswordStrength();
-  }
-
-  calculatePasswordStrength(): void {
-    const hasLetters = /[a-zA-Z]/.test(this.password);
-    const hasNumbers = /\d/.test(this.password);
-    const hasSymbols = /[!@#$%^&*(),.?":{}|<>/_-]/.test(this.password);
-
-    if (this.password.length === 0) {
-      this.easyStrength = 'gray';
-      this.mediumStrength = 'gray';
-      this.strongStrength = 'gray';
-      return;
-    } else if (this.password.length < 8) {
-      this.easyStrength = 'red';
-      this.mediumStrength = 'red';
-      this.strongStrength = 'red';
-      return;
-    } else if (hasLetters && hasNumbers && hasSymbols) {
-      this.easyStrength = 'green';
-      this.mediumStrength = 'green';
-      this.strongStrength = 'green';
-      return;
-    } else if (
-      (hasLetters && hasSymbols) ||
-      (hasLetters && hasNumbers) ||
-      (hasNumbers && hasSymbols)
-    ) {
-      this.easyStrength = 'yellow';
-      this.mediumStrength = 'yellow';
-      this.strongStrength = 'gray';
-      return;
-    } else if (hasLetters || hasNumbers || hasSymbols) {
-      this.easyStrength = 'red';
-      this.mediumStrength = 'gray';
-      this.strongStrength = 'gray';
-      return;
-    }
+  private destroy$ = new Subject();
+  public ngOnDestroy(): void {
+    this.destroy$.next(true);
+    this.destroy$.complete();
   }
 }
